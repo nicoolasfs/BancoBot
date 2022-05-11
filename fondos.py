@@ -1,6 +1,6 @@
 class Fondos:
-    def __init__(self):
-        self.dinero_cuenta = 1000.0
+    def __init__(self, dinero_cuenta: float):
+        self.dinero_cuenta = dinero_cuenta
 
     def retirar_dinero(self, valor: float):
         self.dinero_cuenta -= valor
