@@ -1,14 +1,20 @@
 from fachada import BancoFacade
 
-if __name__ == "__main__":
-    cuenta = BancoFacade(666554433,8888)
-    
-    retiro = cuenta.retirar_dinero(100.0)
-    retiro1 = cuenta.retirar_dinero(900.0)
-    retiro2 = cuenta.retirar_dinero(900.0)
-    deposito = cuenta.depositar_dinero(200)
-    print(retiro)
-    print(retiro1) 
-    print(retiro2)
-    print(deposito)
-    
+class BancoBuilder:
+    def __init__(self):
+        self.numero_cuenta = None
+        self.codigo_seguridad = None
+
+    @staticmethod
+    def crear_banco():
+        return BancoBuilder()
+
+    def set_numero_cuenta(self, numero_cuenta):
+        self.numero_cuenta = numero_cuenta
+        return self
+    def set_codigo_seguridad(self, codigo_seguridad):
+        self.codigo_seguridad = codigo_seguridad
+        return self
+    def build(self):
+        return BancoFacade(self.numero_cuenta, self.codigo_seguridad)
+

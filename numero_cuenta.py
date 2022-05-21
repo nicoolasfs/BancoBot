@@ -12,9 +12,10 @@ class NumeroCuenta:
     def __init__(self, numero_cuenta: int):
         self.numero_cuenta = numero_cuenta
 
-    def validar_numero_cuenta(self, numero: int):
+    def validar_numero_cuenta(self):
         resultado = [False,0,0]
         if self.numero_cuenta in self._cuentas.keys():
             resultado = [True,self._cuentas[self.numero_cuenta][0],self._cuentas[self.numero_cuenta][1]]
-        return resultado
+        return resultado      
+
     
