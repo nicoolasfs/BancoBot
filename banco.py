@@ -21,7 +21,8 @@ class Bot:
         nombre = update.message.chat.first_name
         context.bot.send_chat_action(chat_id=idChat, action=telegram.ChatAction.TYPING)
         context.bot.send_message(chat_id=idChat, text=f"Hola {nombre}, bienvenido al banco UdeC") # saludar
-
+        context.bot.send_message(chat_id=idChat, text=f"👋")
+        self.despachador.add_handler(telegram.ext.CommandHandler(Filters.text, self.mensajes))
 
     def mensajes(self, update, context):
         global posicion
@@ -29,12 +30,12 @@ class Bot:
         idChat = update.message.chat_id
         if posicion == 0:
             context.bot.send_chat_action(chat_id=idChat, action=telegram.ChatAction.TYPING)
-            context.bot.send_message(chat_id=idChat, text="Ingrese su numero de cuenta")
+            context.bot.send_message(chat_id=idChat, text="Ingrese su numero de cuenta 💳")
             posicion = 1
         elif posicion == 1:
             self.datos.set_numero_cuenta(int(mensaje))
             context.bot.send_chat_action(chat_id=idChat, action=telegram.ChatAction.TYPING)
-            context.bot.send_message(chat_id=idChat, text="Ingrese su clave")
+            context.bot.send_message(chat_id=idChat, text="Ingrese su clave 1️⃣2️⃣3️⃣")
             posicion = 2
         elif posicion == 2:
             self.datos.set_codigo_seguridad(int(mensaje))
@@ -42,38 +43,30 @@ class Bot:
             posicion = 20
         elif posicion == 20:
             if mensaje == "1":
-                self.despachador.add_handler(telegram.ext.MessageHandler(Filters.text, self.consultar))
+                context.bot.send_chat_action(chat_id=idChat, action=telegram.ChatAction.TYPING)
+                context.bot.send_message(chat_id=idChat, text= self.datos.build().consultar())
+                posicion = 2
             elif mensaje == "2":
                 context.bot.send_chat_action(chat_id=idChat, action=telegram.ChatAction.TYPING)
-                context.bot.send_message(chat_id=idChat, text=f"Ingrese el monto a retirar")
-                self.despachador.add_handler(telegram.ext.MessageHandler(Filters.text, self.retirar))
+                context.bot.send_message(chat_id=idChat, text=f"Ingrese el monto a retirar 💰")
+                posicion = 22
+                
             elif mensaje == "3":
-                self.despachador.add_handler(telegram.ext.MessageHandler(Filters.text, self.depositar))
+                context.bot.send_chat_action(chat_id=idChat, action=telegram.ChatAction.TYPING)
+                context.bot.send_message(chat_id=idChat, text=f"Ingrese el monto a depositar 💲")
+                posicion = 23
             else:
-                context.bot.send_message(chat_id=idChat, text=f"Opción inválida")
-                posicion = 0
+                context.bot.send_message(chat_id=idChat, text=f"Opción inválida ❌")
+                posicion = 0       
+        elif posicion == 22:
+            context.bot.send_chat_action(chat_id=idChat, action=telegram.ChatAction.TYPING)
+            context.bot.send_message(chat_id=idChat, text= self.datos.build().retirar_dinero(float(update.message.text)))
+            posicion = 2        
+        elif posicion == 23:
+            context.bot.send_chat_action(chat_id=idChat, action=telegram.ChatAction.TYPING)
+            context.bot.send_message(chat_id=idChat, text= self.datos.build().depositar_dinero(float(update.message.text)))
+            posicion = 2
         
-    def consultar(self, update, context):
-        global posicion
-        idChat = update.message.chat_id
-        context.bot.send_chat_action(chat_id=idChat, action=telegram.ChatAction.TYPING)
-        context.bot.send_message(chat_id=idChat, text= {self.datos.build().consultar()})
-        posicion = 2
-    
-    def retirar(self, update, context):
-        global posicion
-        idChat = update.message.chat_id
-        context.bot.send_chat_action(chat_id=idChat, action=telegram.ChatAction.TYPING)
-        context.bot.send_message(chat_id=idChat, text= {self.datos.build().retirar_dinero(float(update.message.text))})
-        posicion = 2
-    
-    def depositar(self, update, context):
-        global posicion
-        idChat = update.message.chat_id
-        context.bot.send_chat_action(chat_id=idChat, action=telegram.ChatAction.TYPING)
-        context.bot.send_message(chat_id=idChat, text= {self.datos.build().depositar_dinero(float(update.message.text))})
-        posicion = 2
-
     def startBot(self):
         self.updater.start_polling()
         self.updater.idle()
